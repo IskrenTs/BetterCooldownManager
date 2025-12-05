@@ -2,12 +2,13 @@ local _, BCDM = ...
 
 local function FetchPowerBarColour(unit)
     local CooldownManagerDB = BCDM.db.profile
+    local GeneralDB = CooldownManagerDB.General
     local PowerBarDB = CooldownManagerDB.PowerBar
     if PowerBarDB then
         if PowerBarDB.ColourByPower then
             local powerType = UnitPowerType(unit)
-            local powerColour = PowerBarDB.CustomColours.PrimaryPower[powerType]
-            if powerColour then return PowerBarDB.CustomColours.PrimaryPower[powerType][1], PowerBarDB.CustomColours.PrimaryPower[powerType][2], PowerBarDB.CustomColours.PrimaryPower[powerType][3], PowerBarDB.CustomColours.PrimaryPower[powerType][4] or 1 end
+            local powerColour = GeneralDB.CustomColours.PrimaryPower[powerType]
+            if powerColour then return GeneralDB.CustomColours.PrimaryPower[powerType][1], GeneralDB.CustomColours.PrimaryPower[powerType][2], GeneralDB.CustomColours.PrimaryPower[powerType][3], GeneralDB.CustomColours.PrimaryPower[powerType][4] or 1 end
         end
         return PowerBarDB.FGColour[1], PowerBarDB.FGColour[2], PowerBarDB.FGColour[3], PowerBarDB.FGColour[4]
     end
@@ -15,12 +16,13 @@ end
 
 local function FetchPowerTextColour(unit)
     local CooldownManagerDB = BCDM.db.profile
+    local GeneralDB = CooldownManagerDB.General
     local PowerBarDB = CooldownManagerDB.PowerBar
     if PowerBarDB then
         if PowerBarDB.Text.ColourByPower then
             local powerType = UnitPowerType(unit)
-            local powerColour = PowerBarDB.CustomColours.PrimaryPower[powerType]
-            if powerColour then return PowerBarDB.CustomColours.PrimaryPower[powerType][1], PowerBarDB.CustomColours.PrimaryPower[powerType][2], PowerBarDB.CustomColours.PrimaryPower[powerType][3], PowerBarDB.CustomColours.PrimaryPower[powerType][4] or 1 end
+            local powerColour = GeneralDB.CustomColours.PrimaryPower[powerType]
+            if powerColour then return GeneralDB.CustomColours.PrimaryPower[powerType][1], GeneralDB.CustomColours.PrimaryPower[powerType][2], GeneralDB.CustomColours.PrimaryPower[powerType][3], GeneralDB.CustomColours.PrimaryPower[powerType][4] or 1 end
         end
         return PowerBarDB.Text.Colour[1], PowerBarDB.Text.Colour[2], PowerBarDB.Text.Colour[3], PowerBarDB.Text.Colour[4]
     end

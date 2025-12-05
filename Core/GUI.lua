@@ -222,12 +222,12 @@ local function DrawGeneralSettings(parentContainer)
 
     local PowerOrder = {0, 1, 2, 3, 6, 8, 11, 13, 17, 18}
     for _, powerType in ipairs(PowerOrder) do
-        local powerColour = BCDM.db.profile.PowerBar.CustomColours.PrimaryPower[powerType]
+        local powerColour = BCDM.db.profile.General.CustomColours.PrimaryPower[powerType]
         local PowerColour = AG:Create("ColorPicker")
         PowerColour:SetLabel(PowerNames[powerType])
         local R, G, B = unpack(powerColour)
         PowerColour:SetColor(R, G, B)
-        PowerColour:SetCallback("OnValueChanged", function(widget, _, r, g, b) BCDM.db.profile.PowerBar.CustomColours.PrimaryPower[powerType] = {r, g, b} BCDM:UpdateBCDM() end)
+        PowerColour:SetCallback("OnValueChanged", function(widget, _, r, g, b) BCDM.db.profile.General.CustomColours.PrimaryPower[powerType] = {r, g, b} BCDM:UpdateBCDM() end)
         PowerColour:SetHasAlpha(false)
         PowerColour:SetRelativeWidth(0.19)
         PrimaryColoursContainer:AddChild(PowerColour)
@@ -241,12 +241,12 @@ local function DrawGeneralSettings(parentContainer)
 
     local SecondaryPowerOrder = { Enum.PowerType.Chi, Enum.PowerType.ComboPoints, Enum.PowerType.HolyPower, Enum.PowerType.ArcaneCharges, Enum.PowerType.Essence, Enum.PowerType.SoulShards, "STAGGER", Enum.PowerType.Runes, "SOUL", "MAELSTROM", }
     for _, powerType in ipairs(SecondaryPowerOrder) do
-        local powerColour = BCDM.db.profile.PowerBar.CustomColours.SecondaryPower[powerType]
+        local powerColour = BCDM.db.profile.General.CustomColours.SecondaryPower[powerType]
         local PowerColour = AG:Create("ColorPicker")
         PowerColour:SetLabel(PowerNames[powerType] or tostring(powerType))
         local R, G, B = unpack(powerColour)
         PowerColour:SetColor(R, G, B)
-        PowerColour:SetCallback("OnValueChanged", function(widget, _, r, g, b) BCDM.db.profile.PowerBar.CustomColours.SecondaryPower[powerType] = {r, g, b} BCDM:UpdateBCDM() end)
+        PowerColour:SetCallback("OnValueChanged", function(widget, _, r, g, b) BCDM.db.profile.General.CustomColours.SecondaryPower[powerType] = {r, g, b} BCDM:UpdateBCDM() end)
         PowerColour:SetHasAlpha(false)
         PowerColour:SetRelativeWidth(0.19)
         SecondaryColoursContainer:AddChild(PowerColour)
@@ -494,7 +494,7 @@ local function DrawPowerBarSettings(parentContainer)
     LayoutContainer:AddChild(PowerBar_OffsetY)
 
     local PowerBar_Height = AG:Create("Slider")
-    PowerBar_Height:SetLabel("Power Bar Height")
+    PowerBar_Height:SetLabel("Height")
     PowerBar_Height:SetValue(PowerBarDB.Height)
     PowerBar_Height:SetSliderValues(5, 50, 1)
     PowerBar_Height:SetRelativeWidth(0.33)
@@ -561,6 +561,116 @@ local function DrawPowerBarSettings(parentContainer)
     Text_FontSize:SetRelativeWidth(0.33)
     Text_FontSize:SetCallback("OnValueChanged", function(_, _, value) PowerBarDB.Text.FontSize = value BCDM:UpdatePowerBar() end)
     TextContainer:AddChild(Text_FontSize)
+
+    return ScrollFrame
+end
+
+local function DrawSecondaryBarSettings(parentContainer)
+    local SecondaryBarDB = BCDM.db.profile.SecondaryBar
+
+    local ScrollFrame = AG:Create("ScrollFrame")
+    ScrollFrame:SetLayout("Flow")
+    ScrollFrame:SetFullWidth(true)
+    ScrollFrame:SetFullHeight(true)
+    parentContainer:AddChild(ScrollFrame)
+
+    local TextureColourContainer = AG:Create("InlineGroup")
+    TextureColourContainer:SetTitle("Texture & Colour Settings")
+    TextureColourContainer:SetFullWidth(true)
+    TextureColourContainer:SetLayout("Flow")
+    ScrollFrame:AddChild(TextureColourContainer)
+
+    local ForegroundTextureDropdown = AG:Create("LSM30_Statusbar")
+    ForegroundTextureDropdown:SetList(LSM:HashTable("statusbar"))
+    ForegroundTextureDropdown:SetLabel("Foreground Texture")
+    ForegroundTextureDropdown:SetValue(SecondaryBarDB.FGTexture)
+    ForegroundTextureDropdown:SetRelativeWidth(0.5)
+    ForegroundTextureDropdown:SetCallback("OnValueChanged", function(widget, _, value) widget:SetValue(value) SecondaryBarDB.FGTexture = value BCDM:UpdateSecondaryBar() end)
+    TextureColourContainer:AddChild(ForegroundTextureDropdown)
+
+    local BackgroundTextureDropdown = AG:Create("LSM30_Statusbar")
+    BackgroundTextureDropdown:SetList(LSM:HashTable("statusbar"))
+    BackgroundTextureDropdown:SetLabel("Background Texture")
+    BackgroundTextureDropdown:SetValue(SecondaryBarDB.BGTexture)
+    BackgroundTextureDropdown:SetRelativeWidth(0.5)
+    BackgroundTextureDropdown:SetCallback("OnValueChanged", function(widget, _, value) widget:SetValue(value) SecondaryBarDB.BGTexture = value BCDM:UpdateSecondaryBar() end)
+    TextureColourContainer:AddChild(BackgroundTextureDropdown)
+
+    FGColour = AG:Create("ColorPicker")
+    FGColour:SetLabel("Foreground Colour")
+    FGColour:SetColor(unpack(SecondaryBarDB.FGColour))
+    FGColour:SetRelativeWidth(0.33)
+    FGColour:SetCallback("OnValueChanged", function(_, _, r, g, b, a) SecondaryBarDB.FGColour = {r, g, b, a} BCDM:UpdateSecondaryBar() end)
+    FGColour:SetDisabled(SecondaryBarDB.ColourByPower)
+    TextureColourContainer:AddChild(FGColour)
+
+    local BGColour = AG:Create("ColorPicker")
+    BGColour:SetLabel("Background Colour")
+    BGColour:SetColor(unpack(SecondaryBarDB.BGColour))
+    BGColour:SetRelativeWidth(0.33)
+    BGColour:SetCallback("OnValueChanged", function(_, _, r, g, b,  a) SecondaryBarDB.BGColour = {r, g, b, a} BCDM:UpdateSecondaryBar() end)
+    TextureColourContainer:AddChild(BGColour)
+
+    local ColourSecondaryBarByPower = AG:Create("CheckBox")
+    ColourSecondaryBarByPower:SetLabel("Colour by Type")
+    ColourSecondaryBarByPower:SetValue(SecondaryBarDB.ColourByPower)
+    ColourSecondaryBarByPower:SetRelativeWidth(0.33)
+    ColourSecondaryBarByPower:SetCallback("OnValueChanged", function(_, _, value) SecondaryBarDB.ColourByPower = value BCDM:UpdateSecondaryBar() FGColour:SetDisabled(value) end)
+    TextureColourContainer:AddChild(ColourSecondaryBarByPower)
+
+    local LayoutContainer = AG:Create("InlineGroup")
+    LayoutContainer:SetTitle("Layout Settings")
+    LayoutContainer:SetFullWidth(true)
+    LayoutContainer:SetLayout("Flow")
+    ScrollFrame:AddChild(LayoutContainer)
+
+    local SecondaryBar_AnchorFrom = AG:Create("Dropdown")
+    SecondaryBar_AnchorFrom:SetLabel("Anchor From")
+    SecondaryBar_AnchorFrom:SetList(Anchors[1], Anchors[2])
+    SecondaryBar_AnchorFrom:SetValue(SecondaryBarDB.Anchors[1])
+    SecondaryBar_AnchorFrom:SetRelativeWidth(0.33)
+    SecondaryBar_AnchorFrom:SetCallback("OnValueChanged", function(_, _, value) SecondaryBarDB.Anchors[1] = value BCDM:UpdateSecondaryBar() end)
+    LayoutContainer:AddChild(SecondaryBar_AnchorFrom)
+
+    local SecondaryBar_AnchorParent = AG:Create("Dropdown")
+    SecondaryBar_AnchorParent:SetLabel("Anchor Parent Frame")
+    SecondaryBar_AnchorParent:SetList(PowerBarParents[1], PowerBarParents[2])
+    SecondaryBar_AnchorParent:SetValue(SecondaryBarDB.Anchors[2])
+    SecondaryBar_AnchorParent:SetRelativeWidth(0.33)
+    SecondaryBar_AnchorParent:SetCallback("OnValueChanged", function(_, _, value) SecondaryBarDB.Anchors[2] = value BCDM:UpdateSecondaryBar() end)
+    LayoutContainer:AddChild(SecondaryBar_AnchorParent)
+
+    local SecondaryBar_AnchorTo = AG:Create("Dropdown")
+    SecondaryBar_AnchorTo:SetLabel("Anchor To")
+    SecondaryBar_AnchorTo:SetList(Anchors[1], Anchors[2])
+    SecondaryBar_AnchorTo:SetValue(SecondaryBarDB.Anchors[3])
+    SecondaryBar_AnchorTo:SetRelativeWidth(0.33)
+    SecondaryBar_AnchorTo:SetCallback("OnValueChanged", function(_, _, value) SecondaryBarDB.Anchors[3] = value BCDM:UpdateSecondaryBar() end)
+    LayoutContainer:AddChild(SecondaryBar_AnchorTo)
+
+    local SecondaryBar_OffsetX = AG:Create("Slider")
+    SecondaryBar_OffsetX:SetLabel("Offset X")
+    SecondaryBar_OffsetX:SetValue(SecondaryBarDB.Anchors[4])
+    SecondaryBar_OffsetX:SetSliderValues(-2000, 2000, 1)
+    SecondaryBar_OffsetX:SetRelativeWidth(0.33)
+    SecondaryBar_OffsetX:SetCallback("OnValueChanged", function(_, _, value) SecondaryBarDB.Anchors[4] = value BCDM:UpdateSecondaryBar() end)
+    LayoutContainer:AddChild(SecondaryBar_OffsetX)
+
+    local SecondaryBar_OffsetY = AG:Create("Slider")
+    SecondaryBar_OffsetY:SetLabel("Offset Y")
+    SecondaryBar_OffsetY:SetValue(SecondaryBarDB.Anchors[5])
+    SecondaryBar_OffsetY:SetSliderValues(-2000, 2000, 1)
+    SecondaryBar_OffsetY:SetRelativeWidth(0.33)
+    SecondaryBar_OffsetY:SetCallback("OnValueChanged", function(_, _, value) SecondaryBarDB.Anchors[5] = value BCDM:UpdateSecondaryBar() end)
+    LayoutContainer:AddChild(SecondaryBar_OffsetY)
+
+    local SecondaryBar_Height = AG:Create("Slider")
+    SecondaryBar_Height:SetLabel("Height")
+    SecondaryBar_Height:SetValue(SecondaryBarDB.Height)
+    SecondaryBar_Height:SetSliderValues(5, 50, 1)
+    SecondaryBar_Height:SetRelativeWidth(0.33)
+    SecondaryBar_Height:SetCallback("OnValueChanged", function(_, _, value) SecondaryBarDB.Height = value BCDM:UpdateSecondaryBar() end)
+    LayoutContainer:AddChild(SecondaryBar_Height)
 
     return ScrollFrame
 end
@@ -755,6 +865,8 @@ function BCDM:CreateGUI()
             DrawCooldownSettings(Wrapper, "BuffIconCooldownViewer")
         elseif MainGroup == "PowerBar" then
             DrawPowerBarSettings(Wrapper)
+        elseif MainGroup == "SecondaryBar" then
+            DrawSecondaryBarSettings(Wrapper)
         elseif MainGroup == "Profiles" then
             DrawProfileSettings(Wrapper)
         end
@@ -768,6 +880,7 @@ function BCDM:CreateGUI()
         { text = "Utility", value = "Utility"},
         { text = "Buffs", value = "Buffs"},
         { text = "Power Bar", value = "PowerBar"},
+        { text = "Secondary Bar", value = "SecondaryBar"},
         { text = "Profiles", value = "Profiles"},
     })
     GUIContainerTabGroup:SetCallback("OnGroupSelected", SelectedGroup)

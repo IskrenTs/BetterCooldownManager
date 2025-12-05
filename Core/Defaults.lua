@@ -15,6 +15,32 @@ BCDM.Defaults = {
                 Colour = {1, 1, 1},
                 Anchors = {"CENTER", "CENTER", 0, 0}
             },
+            CustomColours = {
+                PrimaryPower = {
+                    [0] = {0, 0, 1},            -- Mana
+                    [1] = {1, 0, 0},            -- Rage
+                    [2] = {1, 0.5, 0.25},       -- Focus
+                    [3] = {1, 1, 0},            -- Energy
+                    [6] = {0, 0.82, 1},         -- Runic Power
+                    [8] = {0.75, 0.52, 0.9},     -- Lunar Power
+                    [11] = {0, 0.5, 1},         -- Maelstrom
+                    [13] = {0.4, 0, 0.8},       -- Insanity
+                    [17] = {0.79, 0.26, 0.99},  -- Fury
+                    [18] = {1, 0.61, 0}         -- Pain
+                },
+                SecondaryPower = {
+                    [Enum.PowerType.Chi]           = {0.00, 1.00, 0.59 },
+                    [Enum.PowerType.ComboPoints]   = {1.00, 0.96, 0.41 },
+                    [Enum.PowerType.HolyPower]     = {0.95, 0.90, 0.60 },
+                    [Enum.PowerType.ArcaneCharges] = {0.10, 0.10, 0.98},
+                    [Enum.PowerType.Essence]       = { 0.20, 0.58, 0.50 },
+                    [Enum.PowerType.SoulShards]    = { 0.58, 0.51, 0.79 },
+                    STAGGER                        = { 0.00, 1.00, 0.59 },
+                    [Enum.PowerType.Runes]         = { 0.77, 0.12, 0.23 },
+                    SOUL                           = { 0.29, 0.42, 1.00},
+                    MAELSTROM                      = { 0.25, 0.50, 0.80},
+                }
+            }
         },
         Essential = {
             IconSize = {42, 42},
@@ -57,32 +83,15 @@ BCDM.Defaults = {
                 Anchors = {"BOTTOM", "BOTTOM", 0, 3},
                 ColourByPower = false
             },
-            CustomColours = {
-                PrimaryPower = {
-                    [0] = {0, 0, 1},            -- Mana
-                    [1] = {1, 0, 0},            -- Rage
-                    [2] = {1, 0.5, 0.25},       -- Focus
-                    [3] = {1, 1, 0},            -- Energy
-                    [6] = {0, 0.82, 1},         -- Runic Power
-                    [8] = {0.75, 0.52, 0.9},     -- Lunar Power
-                    [11] = {0, 0.5, 1},         -- Maelstrom
-                    [13] = {0.4, 0, 0.8},       -- Insanity
-                    [17] = {0.79, 0.26, 0.99},  -- Fury
-                    [18] = {1, 0.61, 0}         -- Pain
-                },
-                SecondaryPower = {
-                    [Enum.PowerType.Chi]           = {0.00, 1.00, 0.59 },
-                    [Enum.PowerType.ComboPoints]   = {1.00, 0.96, 0.41 },
-                    [Enum.PowerType.HolyPower]     = {0.95, 0.90, 0.60 },
-                    [Enum.PowerType.ArcaneCharges] = {0.10, 0.10, 0.98},
-                    [Enum.PowerType.Essence]       = { 0.20, 0.58, 0.50 },
-                    [Enum.PowerType.SoulShards]    = { 0.58, 0.51, 0.79 },
-                    STAGGER                        = { 0.00, 1.00, 0.59 },
-                    [Enum.PowerType.Runes]         = { 0.77, 0.12, 0.23 },
-                    SOUL                           = { 0.29, 0.42, 1.00},
-                    MAELSTROM                      = { 0.25, 0.50, 0.80},
-                }
-            }
+        },
+        SecondaryBar = {
+            Height = 13,
+            FGTexture = "Blizzard Raid Bar",
+            BGTexture = "Solid",
+            FGColour = {0/255, 122/255, 204/255, 1},
+            BGColour = {20/255, 20/255, 20/255, 1},
+            Anchors = {"BOTTOM", "EssentialCooldownViewer", "TOP", 0, 2},
+            ColourByPower = true,
         }
     }
 }
