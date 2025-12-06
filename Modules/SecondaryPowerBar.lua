@@ -195,7 +195,7 @@ local function CreateSecondaryPowerBar()
             end
             local tickPosition = (i / count) * width
             tick:ClearAllPoints()
-            tick:SetSize(1, SecondaryPowerBarDB.Height - 2)
+            tick:SetSize(1, SecondaryPowerBar:GetHeight() - 2)
             tick:SetPoint("LEFT", SecondaryPowerBar.StatusBar, "LEFT", tickPosition - 0.1, 0)
             tick:SetDrawLayer("OVERLAY", 7)
             tick:Show()

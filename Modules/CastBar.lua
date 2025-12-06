@@ -100,7 +100,7 @@ local function CreateCastBar()
                 if elapsed < 0 then elapsed = 0 end
                 self:SetValue(elapsed)
                 local seconds = remaining
-                if seconds < CastBarDB.Duration.ExpirationThreshold then
+                if seconds < BCDM.db.profile.CastBar.Duration.ExpirationThreshold then
                     self.Duration:SetText(string.format("%.1f", seconds))
                 else
                     self.Duration:SetText(string.format("%d", seconds))
@@ -133,7 +133,7 @@ local function CreateCastBar()
                 if remaining < 0 then remaining = 0 end
                 self:SetValue(remaining)
                 local seconds = remaining / 1000
-                if seconds < CastBarDB.Duration.ExpirationThreshold then
+                if seconds < BCDM.db.profile.CastBar.Duration.ExpirationThreshold then
                     self.Duration:SetText(string.format("%.1f", seconds))
                 else
                     self.Duration:SetText(string.format("%d", seconds))

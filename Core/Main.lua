@@ -8,7 +8,7 @@ function AddOn:OnInitialize()
             BCDM.db.profile[key] = value
         end
     end
-    if BCDM.db.profile.UseGlobalProfile then BCDM.db:SetProfile(BCDM.db.profile.GlobalProfile or "Default") end
+    if BCDM.db.global.UseGlobalProfile then BCDM.db:SetProfile(BCDM.db.global.GlobalProfile or "Default") end
 end
 
 function AddOn:OnEnable()
