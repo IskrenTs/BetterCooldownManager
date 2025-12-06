@@ -13,7 +13,7 @@ local function DetectSecondaryPower()
         return Enum.PowerType.ComboPoints
     elseif class == "DRUID" then
         local form = GetShapeshiftFormID()
-        if form == CAT_FORM then return Enum.PowerType.ComboPoints end
+        if form == 1 then return Enum.PowerType.ComboPoints end
     elseif class == "PALADIN" then
         return Enum.PowerType.HolyPower
     elseif class == "WARLOCK" then
@@ -267,6 +267,7 @@ local function CreateSecondaryPowerBar()
         SecondaryPowerBar.StatusBar:SetMinMaxValues(0, max)
         SecondaryPowerBar.StatusBar:SetValue(current)
         SecondaryPowerBar.StatusBar:SetStatusBarColor(FetchPowerBarColour("player"))
+        SecondaryPowerBar:Show()
         CreateTicks(max)
     end
 
