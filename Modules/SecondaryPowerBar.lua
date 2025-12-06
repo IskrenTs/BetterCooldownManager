@@ -66,7 +66,7 @@ end
 
 local function StartSoulTicker()
     if soulTicker then return end
-    soulTicker = C_Timer.NewTicker(0.1, function()
+    soulTicker = C_Timer.NewTicker(1, function()
         if DetectSecondaryPower() == "SOUL" and BCDM.SecondaryPowerBar and BCDM.SecondaryPowerBar:IsShown() then
             BCDM:UpdateSecondary()
         else
@@ -179,6 +179,7 @@ local function CreateSecondaryPowerBar()
     SecondaryPowerBar.Ticks = {}
 
     local function ClearTicks() for _, tick in ipairs(SecondaryPowerBar.Ticks) do tick:Hide() end end
+
     local function CreateTicks(count)
         ClearTicks()
         if count <= 1 then return end
@@ -206,6 +207,7 @@ local function CreateSecondaryPowerBar()
         if secondaryPowerResource == "SOUL" then
             ClearTicks()
             local soulBar = _G["DemonHunterSoulFragmentsBar"]
+            local hasSoulGlutton = C_SpellBook.IsSpellKnown(1247534) -- Soul Glutton
             if soulBar then
                 if not soulBar:IsShown() then soulBar:Show() soulBar:SetAlpha(0) end
                 local current = soulBar:GetValue() or 0
@@ -213,6 +215,11 @@ local function CreateSecondaryPowerBar()
                 SecondaryPowerBar.StatusBar:SetMinMaxValues(min, max)
                 SecondaryPowerBar.StatusBar:SetValue(current)
                 SecondaryPowerBar.StatusBar:SetStatusBarColor(FetchPowerBarColour("player"))
+                if hasSoulGlutton then
+                    CreateTicks(7)
+                else
+                    CreateTicks(10)
+                end
             else
                 SecondaryPowerBar.StatusBar:SetValue(0)
             end
