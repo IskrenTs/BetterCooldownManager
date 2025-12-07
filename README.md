@@ -1,7 +1,4 @@
-<h2>
-  <img src="BetterCooldownManager/Media/Logo.png" style="height:32px; vertical-align:middle;">
-  BetterCooldownManager
-</h2>
+![BetterCooldownManager Logo](https://raw.githubusercontent.com/DaleHuntGB/BetterCooldownManager/refs/heads/main/Media/Logo.png?token=GHSAT0AAAAAADQIMMCUI6BYJBTGVOYANV2A2JVNEOA)
 
 ### Overview
 
