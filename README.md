@@ -1,4 +1,7 @@
-## ![](BetterCooldownManager/Media/Logo.png)|cFF8080FFBetter|rCooldownManager
+<h2>
+  <img src="BetterCooldownManager/Media/Logo.png" style="height:32px; vertical-align:middle;">
+  BetterCooldownManager
+</h2>
 
 ### Overview
 
