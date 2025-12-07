@@ -106,6 +106,17 @@ function CreateCustomIcon(spellId)
     customSpellIcon:SetPoint(unpack(DefensiveDB.Anchors))
     customSpellIcon:RegisterEvent("SPELL_UPDATE_COOLDOWN")
 
+    local HighLevelContainer = CreateFrame("Frame", nil, customSpellIcon)
+    HighLevelContainer:SetAllPoints(customSpellIcon)
+    HighLevelContainer:SetFrameLevel(customSpellIcon:GetFrameLevel() + 999)
+
+    customSpellIcon.Charges = HighLevelContainer:CreateFontString(nil, "OVERLAY")
+    customSpellIcon.Charges:SetFont(BCDM.Media.Font, DefensiveDB.Count.FontSize, GeneralDB.FontFlag)
+    customSpellIcon.Charges:SetPoint(DefensiveDB.Count.Anchors[1], customSpellIcon, DefensiveDB.Count.Anchors[2], DefensiveDB.Count.Anchors[3], DefensiveDB.Count.Anchors[4])
+    customSpellIcon.Charges:SetTextColor(DefensiveDB.Count.Colour[1], DefensiveDB.Count.Colour[2], DefensiveDB.Count.Colour[3], 1)
+    customSpellIcon.Charges:SetShadowColor(GeneralDB.Shadows.Colour[1], GeneralDB.Shadows.Colour[2], GeneralDB.Shadows.Colour[3], GeneralDB.Shadows.Colour[4])
+    customSpellIcon.Charges:SetShadowOffset(GeneralDB.Shadows.OffsetX, GeneralDB.Shadows.OffsetY)
+
     customSpellIcon.Cooldown = CreateFrame("Cooldown", nil, customSpellIcon, "CooldownFrameTemplate")
     customSpellIcon.Cooldown:SetAllPoints(customSpellIcon)
     customSpellIcon.Cooldown:SetDrawEdge(false)
@@ -114,21 +125,16 @@ function CreateCustomIcon(spellId)
     customSpellIcon.Cooldown:SetHideCountdownNumbers(false)
     customSpellIcon.Cooldown:SetReverse(false)
 
-    customSpellIcon.Charges = customSpellIcon:CreateFontString(nil, "OVERLAY")
-    customSpellIcon.Charges:SetFont(BCDM.Media.Font, DefensiveDB.Count.FontSize, GeneralDB.FontFlag)
-    customSpellIcon.Charges:SetPoint(DefensiveDB.Count.Anchors[1], customSpellIcon, DefensiveDB.Count.Anchors[2], DefensiveDB.Count.Anchors[3], DefensiveDB.Count.Anchors[4])
-    customSpellIcon.Charges:SetTextColor(DefensiveDB.Count.Colour[1], DefensiveDB.Count.Colour[2], DefensiveDB.Count.Colour[3], 1)
-    customSpellIcon.Charges:SetShadowColor(GeneralDB.Shadows.Colour[1], GeneralDB.Shadows.Colour[2], GeneralDB.Shadows.Colour[3], GeneralDB.Shadows.Colour[4])
-    customSpellIcon.Charges:SetShadowOffset(GeneralDB.Shadows.OffsetX, GeneralDB.Shadows.OffsetY)
     local spellCharges = C_Spell.GetSpellCharges(spellId)
     customSpellIcon.Charges:SetText(spellCharges and spellCharges.currentCharges or "")
     customSpellIcon:HookScript("OnEvent", function(self, event, ...)
         if event == "SPELL_UPDATE_COOLDOWN" then
             local cooldownData = C_Spell.GetSpellCooldown(spellId)
-            customSpellIcon.Cooldown:SetCooldown(cooldownData.startTime, cooldownData.duration)
             if spellCharges then
                 customSpellIcon.Charges:SetText(C_Spell.GetSpellCharges(spellId).currentCharges or "")
+                customSpellIcon.Cooldown:SetCooldown(cooldownData.startTime, cooldownData.duration)
             end
+            customSpellIcon.Cooldown:SetCooldown(cooldownData.startTime, cooldownData.duration)
         end
     end)
 
