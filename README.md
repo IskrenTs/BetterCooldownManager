@@ -1,4 +1,8 @@
-![BetterCooldownManager Logo](https://raw.githubusercontent.com/DaleHuntGB/BetterCooldownManager/refs/heads/main/Media/Logo.png?token=GHSAT0AAAAAADQIMMCUI6BYJBTGVOYANV2A2JVNEOA)
+<h2 align="center">
+  <img src="https://raw.githubusercontent.com/DaleHuntGB/BetterCooldownManager/refs/heads/main/Media/Logo.png?token=GHSAT0AAAAAADQIMMCUI6BYJBTGVOYANV2A2JVNEOA" alt="BetterCooldownManager Logo" />
+  <br>
+  BetterCooldownManager
+</h2>
 
 ### Overview
 
