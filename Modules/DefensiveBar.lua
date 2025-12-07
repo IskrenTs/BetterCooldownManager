@@ -95,7 +95,6 @@ function CreateCustomIcon(spellId)
     local CooldownManagerDB = BCDM.db.profile
     local GeneralDB = CooldownManagerDB.General
     local DefensiveDB = CooldownManagerDB.Defensive
-    local CooldownTextDB = GeneralDB.CooldownText
     if not spellId then return end
     if not C_SpellBook.IsSpellKnown(spellId) then return end
 
