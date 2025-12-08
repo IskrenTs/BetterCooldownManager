@@ -808,27 +808,26 @@ local function DrawDefensiveSettings(parentContainer)
     SupportedDefensivesContainer:SetLayout("Flow")
     ScrollFrame:AddChild(SupportedDefensivesContainer)
 
-    local SupportedDefensiveContainerInfoTag = CreateInfoTag("The following is a list of all defensive abilities currently supported by the |cFF8080FFDefensive Cooldown Viewer|r.\nIf you feel an ability is missing, please visit the |cFF8080FFGitHub|r page to request its addition.")
+    local SupportedDefensiveContainerInfoTag = CreateInfoTag("Below are all the abilities for " .. ClassToPrettyClass[select(2, UnitClass("player"))] .. ". Check the ones you want to track in the Defensive Cooldown Viewer.")
     SupportedDefensivesContainer:AddChild(SupportedDefensiveContainerInfoTag)
 
-    for class, _ in pairs(BCDM.DefensiveSpells) do
-        local classContainer = AG:Create("InlineGroup")
-        classContainer:SetTitle(ClassToPrettyClass[class])
-        classContainer:SetFullWidth(true)
-        classContainer:SetLayout("Flow")
-        SupportedDefensivesContainer:AddChild(classContainer)
+    local playerClass = select(2, UnitClass("player"))
 
-        for spellID in pairs(BCDM.DefensiveSpells[class]) do
-            local DefensiveAbilityLabel = AG:Create("InteractiveLabel")
-            DefensiveAbilityLabel:SetText(FetchSpellInformation(spellID))
-            DefensiveAbilityLabel:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-            DefensiveAbilityLabel:SetJustifyH("LEFT")
-            DefensiveAbilityLabel:SetJustifyV("MIDDLE")
-            DefensiveAbilityLabel:SetRelativeWidth(0.33)
-            DefensiveAbilityLabel:SetCallback("OnEnter", function() GameTooltip:SetOwner(DefensiveAbilityLabel.frame, "ANCHOR_CURSOR") GameTooltip:SetSpellByID(spellID) end)
-            DefensiveAbilityLabel:SetCallback("OnLeave", function() GameTooltip:Hide() end)
-            classContainer:AddChild(DefensiveAbilityLabel)
-        end
+    local classContainer = AG:Create("InlineGroup")
+    classContainer:SetTitle(ClassToPrettyClass[playerClass])
+    classContainer:SetFullWidth(true)
+    classContainer:SetLayout("Flow")
+    SupportedDefensivesContainer:AddChild(classContainer)
+
+    for spellID in pairs(BCDM.DefensiveSpells[playerClass]) do
+        local DefensiveAbilityCheckBox = AG:Create("CheckBox")
+        DefensiveAbilityCheckBox:SetLabel(FetchSpellInformation(spellID))
+        DefensiveAbilityCheckBox:SetRelativeWidth(0.33)
+        DefensiveAbilityCheckBox:SetValue(CooldownManagerDB.Defensive.DefensiveSpells[select(2, UnitClass("player"))][spellID] or false)
+        DefensiveAbilityCheckBox:SetCallback("OnValueChanged", function(_, _, value) CooldownManagerDB.Defensive.DefensiveSpells[select(2, UnitClass("player"))][spellID] = value BCDM:ResetCustomIcons() end)
+        DefensiveAbilityCheckBox:SetCallback("OnEnter", function() GameTooltip:SetOwner(DefensiveAbilityCheckBox.frame, "ANCHOR_CURSOR") GameTooltip:SetSpellByID(spellID) end)
+        DefensiveAbilityCheckBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
+        classContainer:AddChild(DefensiveAbilityCheckBox)
     end
 
     ScrollFrame:DoLayout()

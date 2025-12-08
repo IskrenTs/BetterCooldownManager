@@ -108,6 +108,7 @@ BCDM.Defaults = {
                 Colour = {1, 1, 1},
                 Anchors = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 3}
             },
+            DefensiveSpells = {}
         },
         PowerBar = {
             Height = 13,

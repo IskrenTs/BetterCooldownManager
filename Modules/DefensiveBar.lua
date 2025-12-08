@@ -213,20 +213,24 @@ function LayoutCustomIcons()
 end
 
 function BCDM:SetupCustomIcons()
+    local CooldownManagerDB = BCDM.db.profile
     wipe(BCDM.CustomFrames)
     wipe(BCDM.DefensiveBar)
     local _, class = UnitClass("player")
 
-    local spellList = DefensiveSpells[class] or {}
-    for spellId in pairs(spellList) do
-        local frame = CreateCustomIcon(spellId)
-        BCDM.CustomFrames[spellId] = frame
-        table.insert(BCDM.DefensiveBar, frame)
+    local spellList = CooldownManagerDB.Defensive.DefensiveSpells[class] or {}
+    for spellId, isActive in pairs(spellList) do
+        if spellId and isActive then
+            local frame = CreateCustomIcon(spellId)
+            BCDM.CustomFrames[spellId] = frame
+            table.insert(BCDM.DefensiveBar, frame)
+        end
     end
     LayoutCustomIcons()
 end
 
 function BCDM:ResetCustomIcons()
+    local CooldownManagerDB = BCDM.db.profile
     -- Can we even destroy frames?
     for spellId, frame in pairs(BCDM.CustomFrames) do
         if frame then
@@ -242,11 +246,13 @@ function BCDM:ResetCustomIcons()
     wipe(BCDM.CustomFrames)
     wipe(BCDM.DefensiveBar)
     local _, class = UnitClass("player")
-    local spellList = DefensiveSpells[class] or {}
-    for spellId in pairs(spellList) do
-        local frame = CreateCustomIcon(spellId)
-        BCDM.CustomFrames[spellId] = frame
-        table.insert(BCDM.DefensiveBar, frame)
+    local spellList = CooldownManagerDB.Defensive.DefensiveSpells[class] or {}
+    for spellId, isActive in pairs(spellList) do
+        if spellId and isActive then
+            local frame = CreateCustomIcon(spellId)
+            BCDM.CustomFrames[spellId] = frame
+            table.insert(BCDM.DefensiveBar, frame)
+        end
     end
     LayoutCustomIcons()
 end
@@ -280,3 +286,18 @@ SpellsChangedEventFrame:SetScript("OnEvent", function(self, event, ...)
         BCDM:ResetCustomIcons()
     end
 end)
+
+function BCDM:CopyDefensiveSpellsToDB()
+    local profileDB = BCDM.db.profile
+
+    local _, class = UnitClass("player")
+    local sourceTable = DefensiveSpells[class]
+    if not profileDB.Defensive.DefensiveSpells[class] then profileDB.Defensive.DefensiveSpells[class] = {} end
+
+    local classDB = profileDB.Defensive.DefensiveSpells[class]
+    for spellId, value in pairs(sourceTable) do
+        if classDB[spellId] == nil then
+            classDB[spellId] = value
+        end
+    end
+end
