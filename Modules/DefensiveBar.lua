@@ -29,7 +29,6 @@ local DefensiveSpells = {
         [11426] = true,         -- Ice Barrier
         [235313] = true,        -- Blazing Barrier
         [235450] = true,        -- Prismatic Barrier
-        [414658] = true,        -- Ice Cold
         [45438] = true,         -- Ice Block
     },
     -- Paladin
