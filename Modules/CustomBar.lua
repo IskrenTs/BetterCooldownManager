@@ -133,7 +133,7 @@ function CreateCustomIcon(spellId)
     customSpellIcon:HookScript("OnEvent", function(self, event, ...)
         if event == "SPELL_UPDATE_COOLDOWN" or event == "PLAYER_ENTERING_WORLD" or event == "SPELL_UPDATE_CHARGES" then
             local spellCharges = C_Spell.GetSpellCharges(spellId)
-            if spellCharges then
+            if spellCharges and spellCharges.maxCharges > 1 then
                 customSpellIcon.Charges:SetText(tostring(spellCharges.currentCharges))
                 customSpellIcon.Cooldown:SetCooldown(spellCharges.cooldownStartTime, spellCharges.cooldownDuration)
             else
