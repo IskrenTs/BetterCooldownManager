@@ -94,6 +94,8 @@ end
 
 function BCDM:SetupSlashCommands()
     SLASH_BCDM1 = "/bcdm"
+    SLASH_BCDM2 = "/bcm"
+    SLASH_BCDM3 = "/cdm"
     SlashCmdList["BCDM"] = function(msg)
         if msg == "" or msg == "gui" or msg == "options" then BCDM:CreateGUI() end
     end
