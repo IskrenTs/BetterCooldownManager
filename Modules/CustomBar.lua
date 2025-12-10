@@ -478,10 +478,17 @@ function BCDM:AddCustomSpell(value)
     profileDB.Custom.CustomSpells[class] = profileDB.Custom.CustomSpells[class] or {}
     profileDB.Custom.CustomSpells[class][specName] = profileDB.Custom.CustomSpells[class][specName] or {}
     local specTable = profileDB.Custom.CustomSpells[class][specName]
-    local nextIndex = #specTable + 1
-    specTable[spellId] = { isActive = true, layoutIndex = nextIndex }
+    local maxIndex = 0
+    for _, data in pairs(specTable) do
+        if data.layoutIndex and data.layoutIndex > maxIndex then
+            maxIndex = data.layoutIndex
+        end
+    end
+    local nextIndex = maxIndex + 1
+    specTable[spellId] = { isActive = true, layoutIndex = nextIndex, }
     BCDM:ResetCustomIcons()
 end
+
 
 function BCDM:RemoveCustomSpell(value)
     if not value then return end
