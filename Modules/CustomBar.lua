@@ -516,7 +516,7 @@ function BCDM:MoveCustomSpell(spellId, value)
     local specTable = profileDB.Custom.CustomSpells[class] and profileDB.Custom.CustomSpells[class][specName]
     if not specTable or not specTable[spellId] then return end
     if specTable[spellId].layoutIndex + value < 1 then return end
-    for otherSpellId, data in pairs(specTable) do
+    for _, data in pairs(specTable) do
         if data.layoutIndex == specTable[spellId].layoutIndex + value then
             data.layoutIndex = specTable[spellId].layoutIndex
             break
