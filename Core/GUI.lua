@@ -872,12 +872,13 @@ local function DrawCustomBarSettings(parentContainer)
         ScrollFrame:DoLayout()
     end
 
+    local CustomContainerInfoTag = CreateInfoTag("To add a custom spell, enter the |cFF8080FFSpellID|r or |cFF8080FFSpell Name|r into the box below and press |cFF8080FFEnter|r. You can also |cFF8080FFDrag|r & |cFF8080FFDrop|r spells from your spellbook onto the box.")
+    SupportedCustomContainer:AddChild(CustomContainerInfoTag)
+
     local AddCustomEditBox = AG:Create("EditBox")
     AddCustomEditBox:SetLabel("SpellID / Spell Name")
     AddCustomEditBox:SetRelativeWidth(0.33)
     AddCustomEditBox:SetCallback("OnEnterPressed", function() local input = AddCustomEditBox:GetText() if not input or input == "" then return end BCDM:AddCustomSpell(input) BCDM:Print("Added: " .. FetchSpellInformation(input)) BuildCustomSpellList() AddCustomEditBox:SetText("") AddCustomEditBox:ClearFocus() end)
-    AddCustomEditBox:SetCallback("OnEnter", function() GameTooltip:SetOwner(AddCustomEditBox.frame, "ANCHOR_CURSOR") GameTooltip:SetText("|cFF8080FFSpell Name|r will automatically be converted to its respective SpellID") end)
-    AddCustomEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
     SupportedCustomContainer:AddChild(AddCustomEditBox)
 
     local CopyRecommendedSpellsButton = AG:Create("Button")
@@ -1125,12 +1126,13 @@ local function DrawItemBarSettings(parentContainer)
         ScrollFrame:DoLayout()
     end
 
+    local CustomItemContainerInfoTag = CreateInfoTag("To add a custom item, enter the |cFF8080FFItemID|r into the box below and press |cFF8080FFEnter|r. You can also |cFF8080FFDrag|r & |cFF8080FFDrop|r items from your inventory onto the box.")
+    SupportedCustomContainer:AddChild(CustomItemContainerInfoTag)
+
     local AddCustomEditBox = AG:Create("EditBox")
     AddCustomEditBox:SetLabel("ItemID")
     AddCustomEditBox:SetRelativeWidth(0.33)
     AddCustomEditBox:SetCallback("OnEnterPressed", function() local input = AddCustomEditBox:GetText() if not input or input == "" then return end BCDM:AddCustomItem(input) BCDM:Print("Added: " .. FetchItemInformation(input)) BuildCustomSpellList() AddCustomEditBox:SetText("") AddCustomEditBox:ClearFocus() end)
-    AddCustomEditBox:SetCallback("OnEnter", function() GameTooltip:SetOwner(AddCustomEditBox.frame, "ANCHOR_CURSOR") GameTooltip:SetText("|cFF8080FFItemIDs|r are required, but dragging & dropping items is also supported.") end)
-    AddCustomEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
     SupportedCustomContainer:AddChild(AddCustomEditBox)
 
     local CopyRecommendedItemsButton = AG:Create("Button")
