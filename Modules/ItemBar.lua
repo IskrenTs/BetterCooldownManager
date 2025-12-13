@@ -4,6 +4,28 @@ BCDM.ItemFrames = BCDM.ItemFrames or {}
 local PetFrameEventFrame = CreateFrame("Frame")
 PetFrameEventFrame:RegisterEvent("UNIT_PET")
 
+local function ApplyCooldownText(cooldown)
+    if not cooldown then return end
+    local CooldownManagerDB = BCDM.db.profile
+    local GeneralDB = CooldownManagerDB.General
+    local CooldownTextDB = GeneralDB.CooldownText
+    if not cooldown.customBarCooldownText then
+        for _, region in ipairs({ cooldown:GetRegions() }) do
+            if region:GetObjectType() == "FontString" then
+                cooldown.customBarCooldownText = region
+                break
+            end
+        end
+    end
+    local region = cooldown.customBarCooldownText
+    if not region then return end
+    region:SetFont(BCDM.Media.Font, CooldownTextDB.FontSize, GeneralDB.FontFlag)
+    region:SetTextColor(unpack(CooldownTextDB.Colour))
+    region:SetShadowColor(unpack(GeneralDB.Shadows.Colour))
+    region:SetShadowOffset(GeneralDB.Shadows.OffsetX, GeneralDB.Shadows.OffsetY)
+    return region
+end
+
 local CustomItems = {
     [241292] = { isActive = false, layoutIndex = 1 }, -- Draught of Rampant Abandon
     [241308] = { isActive = true, layoutIndex = 2 }, -- Light's Potential
@@ -91,6 +113,8 @@ function CreateItemIcon(itemId)
         customItemIcon.Icon:SetDesaturated(false)
         customItemIcon.Count:SetText(tostring(itemCount))
     end
+
+    ApplyCooldownText(customItemIcon.Cooldown)
 
     return customItemIcon
 end
@@ -273,6 +297,7 @@ function BCDM:UpdateItemIcons()
             icon.Count:SetTextColor(ItemDB.Count.Colour[1], ItemDB.Count.Colour[2], ItemDB.Count.Colour[3], 1)
             icon.Count:SetShadowColor(GeneralDB.Shadows.Colour[1], GeneralDB.Shadows.Colour[2], GeneralDB.Shadows.Colour[3], GeneralDB.Shadows.Colour[4])
             icon.Count:SetShadowOffset(GeneralDB.Shadows.OffsetX, GeneralDB.Shadows.OffsetY)
+            ApplyCooldownText(icon.Cooldown)
         end
     end
     LayoutItemIcons()

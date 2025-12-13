@@ -239,6 +239,28 @@ local CustomSpells = {
 
 BCDM.CustomSpells = CustomSpells
 
+local function ApplyCooldownText(cooldown)
+    if not cooldown then return end
+    local CooldownManagerDB = BCDM.db.profile
+    local GeneralDB = CooldownManagerDB.General
+    local CooldownTextDB = GeneralDB.CooldownText
+    if not cooldown.customBarCooldownText then
+        for _, region in ipairs({ cooldown:GetRegions() }) do
+            if region:GetObjectType() == "FontString" then
+                cooldown.customBarCooldownText = region
+                break
+            end
+        end
+    end
+    local region = cooldown.customBarCooldownText
+    if not region then return end
+    region:SetFont(BCDM.Media.Font, CooldownTextDB.FontSize, GeneralDB.FontFlag)
+    region:SetTextColor(unpack(CooldownTextDB.Colour))
+    region:SetShadowColor(unpack(GeneralDB.Shadows.Colour))
+    region:SetShadowOffset(GeneralDB.Shadows.OffsetX, GeneralDB.Shadows.OffsetY)
+    return region
+end
+
 function CreateCustomIcon(spellId)
     local CooldownManagerDB = BCDM.db.profile
     local GeneralDB = CooldownManagerDB.General
@@ -293,6 +315,8 @@ function CreateCustomIcon(spellId)
     customSpellIcon.Icon:SetPoint("BOTTOMRIGHT", customSpellIcon, "BOTTOMRIGHT", -1, 1)
     customSpellIcon.Icon:SetTexCoord((GeneralDB.IconZoom) * 0.5, 1 - (GeneralDB.IconZoom) * 0.5, (GeneralDB.IconZoom) * 0.5, 1 - (GeneralDB.IconZoom) * 0.5)
     customSpellIcon.Icon:SetTexture(C_Spell.GetSpellInfo(spellId).iconID)
+
+    ApplyCooldownText(customSpellIcon.Cooldown)
 
     return customSpellIcon
 end
@@ -438,6 +462,7 @@ function BCDM:UpdateCustomIcons()
             icon.Charges:SetTextColor(CustomDB.Count.Colour[1], CustomDB.Count.Colour[2], CustomDB.Count.Colour[3], 1)
             icon.Charges:SetShadowColor(GeneralDB.Shadows.Colour[1], GeneralDB.Shadows.Colour[2], GeneralDB.Shadows.Colour[3], GeneralDB.Shadows.Colour[4])
             icon.Charges:SetShadowOffset(GeneralDB.Shadows.OffsetX, GeneralDB.Shadows.OffsetY)
+            ApplyCooldownText(icon.Cooldown)
         end
     end
     LayoutCustomIcons()
