@@ -9,8 +9,6 @@ function AddOn:OnInitialize()
         end
     end
     if BCDM.db.global.UseGlobalProfile then BCDM.db:SetProfile(BCDM.db.global.GlobalProfile or "Default") end
-    BCDM:CopyCustomSpellsToDB()
-    BCDM:CopyCustomItemsToDB()
 end
 
 local WaitForAddOns = CreateFrame("Frame")

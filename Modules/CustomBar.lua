@@ -312,8 +312,8 @@ local LayoutConfig = {
 function LayoutCustomIcons()
     local CustomDB = BCDM.db.profile.Custom
     local icons = BCDM.CustomBar
-    if #icons == 0 then return end
     if not BCDM.CustomContainer then BCDM.CustomContainer = CreateFrame("Frame", "CustomCooldownViewer", UIParent) end
+    if #icons == 0 then return end
 
     local CustomContainer = BCDM.CustomContainer
     local spacing = CustomDB.Spacing
@@ -500,6 +500,16 @@ function BCDM:RemoveCustomSpell(value)
     local specTable = profileDB.Custom.CustomSpells[class] and profileDB.Custom.CustomSpells[class][specName]
     if not specTable then return end
     specTable[spellId] = nil
+    local layoutIndex = 1
+    local orderedSpells = {}
+    for id, data in pairs(specTable) do
+        table.insert(orderedSpells, { spellId = id, layoutIndex = data.layoutIndex })
+    end
+    table.sort(orderedSpells, function(a, b) return a.layoutIndex < b.layoutIndex end)
+    for _, entry in ipairs(orderedSpells) do
+        specTable[entry.spellId].layoutIndex = layoutIndex
+        layoutIndex = layoutIndex + 1
+    end
     BCDM:ResetCustomIcons()
 end
 

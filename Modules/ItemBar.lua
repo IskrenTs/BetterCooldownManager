@@ -5,15 +5,15 @@ local PetFrameEventFrame = CreateFrame("Frame")
 PetFrameEventFrame:RegisterEvent("UNIT_PET")
 
 local CustomItems = {
-    [241292] = false, -- Draught of Rampant Abandon
-    [241308] = true, -- Light's Potential
-    [241304] = true, -- Silvermoon Healing Potion
-    [241300] = false, -- Lightfused Mana Potion
-    [241296] = false, -- Potion of Zealotry
-    [241294] = false, -- Potion of Devoured Dreams
-    [241286] = false, -- Light's Preservation
-    [241288] = false, -- Potion of Recklessness
-    [241302] = false, -- Void-Shrouded Tincture
+    [241292] = { isActive = false, layoutIndex = 1 }, -- Draught of Rampant Abandon
+    [241308] = { isActive = true, layoutIndex = 2 }, -- Light's Potential
+    [241304] = { isActive = true, layoutIndex = 3 }, -- Silvermoon Healing Potion
+    [241300] = { isActive = false, layoutIndex = 4 }, -- Lightfused Mana Potion
+    [241296] = { isActive = false, layoutIndex = 5 }, -- Potion of Zealotry
+    [241294] = { isActive = false, layoutIndex = 6 }, -- Potion of Devoured Dreams
+    [241286] = { isActive = false, layoutIndex = 7 }, -- Light's Preservation
+    [241288] = { isActive = false, layoutIndex = 8 }, -- Potion of Recklessness
+    [241302] = { isActive = false, layoutIndex = 9 }, -- Void-Shrouded Tincture
 }
 
 BCDM.CustomItems = CustomItems
@@ -110,8 +110,8 @@ local LayoutConfig = {
 function LayoutItemIcons()
     local ItemDB = BCDM.db.profile.Items
     local icons = BCDM.ItemBar
-    if #icons == 0 then return end
     if not BCDM.ItemContainer then BCDM.ItemContainer = CreateFrame("Frame", "ItemCooldownViewer", UIParent) end
+    if #icons == 0 then return end
 
     local ItemContainer = BCDM.ItemContainer
     local spacing = ItemDB.Spacing
@@ -179,25 +179,43 @@ local function AdjustForPetFrame()
 end
 
 function BCDM:SetupItemIcons()
-    local CooldownManagerDB = BCDM.db.profile
+    local db = BCDM.db.profile
     wipe(BCDM.ItemFrames)
     wipe(BCDM.ItemBar)
-    local spellList = CooldownManagerDB.Items.CustomItems or {}
-    for spellId, isActive in pairs(spellList) do
-        if spellId and isActive then
-            local frame = CreateItemIcon(spellId)
-            BCDM.ItemFrames[spellId] = frame
+
+    local itemList = db.Items.CustomItems or {}
+    local iconOrder = {}
+
+    for itemId, data in pairs(itemList) do
+        if data.isActive then
+            table.insert(iconOrder, {
+                itemId = itemId,
+                layoutIndex = data.layoutIndex or 9999
+            })
+        end
+    end
+
+    table.sort(iconOrder, function(a, b)
+        return a.layoutIndex < b.layoutIndex
+    end)
+
+    for _, entry in ipairs(iconOrder) do
+        local frame = CreateItemIcon(entry.itemId)
+        if frame then
+            BCDM.ItemFrames[entry.itemId] = frame
             table.insert(BCDM.ItemBar, frame)
         end
     end
+
     LayoutItemIcons()
     AdjustForPetFrame()
 end
 
+
 function BCDM:ResetItemIcons()
-    local CooldownManagerDB = BCDM.db.profile
-    -- Can we even destroy frames?
-    for spellId, frame in pairs(BCDM.ItemFrames) do
+    local db = BCDM.db.profile
+
+    for itemId, frame in pairs(BCDM.ItemFrames) do
         if frame then
             frame:Hide()
             frame:ClearAllPoints()
@@ -206,20 +224,40 @@ function BCDM:ResetItemIcons()
             frame:SetScript("OnUpdate", nil)
             frame:SetScript("OnEvent", nil)
         end
-        _G["BCDM_Item_" .. spellId] = nil
+        _G["BCDM_Item_" .. itemId] = nil
     end
+
     wipe(BCDM.ItemFrames)
     wipe(BCDM.ItemBar)
-    local spellList = CooldownManagerDB.Items.CustomItems or {}
-    for spellId, isActive in pairs(spellList) do
-        if spellId and isActive then
-            local frame = CreateItemIcon(spellId)
-            BCDM.ItemFrames[spellId] = frame
+
+    local itemList = db.Items.CustomItems or {}
+    local iconOrder = {}
+
+    for itemId, data in pairs(itemList) do
+        if data.isActive then
+            table.insert(iconOrder, {
+                itemId = itemId,
+                layoutIndex = data.layoutIndex or 9999
+            })
+        end
+    end
+
+    table.sort(iconOrder, function(a, b)
+        return a.layoutIndex < b.layoutIndex
+    end)
+
+    for _, entry in ipairs(iconOrder) do
+        local frame = CreateItemIcon(entry.itemId)
+        if frame then
+            BCDM.ItemFrames[entry.itemId] = frame
             table.insert(BCDM.ItemBar, frame)
         end
     end
+
     LayoutItemIcons()
+    AdjustForPetFrame()
 end
+
 
 function BCDM:UpdateItemIcons()
     local CooldownManagerDB = BCDM.db.profile
@@ -255,29 +293,82 @@ end)
 function BCDM:CopyCustomItemsToDB()
     local profileDB = BCDM.db.profile
     local sourceTable = CustomItems
-    if not profileDB.Items.CustomItems then profileDB.Items.CustomItems = {} end
-    local classDB = profileDB.Items.CustomItems
-    for itemId, value in pairs(sourceTable) do
-        if classDB[itemId] == nil then
-            classDB[itemId] = value
+    profileDB.Items.CustomItems = profileDB.Items.CustomItems or {}
+    local target = profileDB.Items.CustomItems
+    for itemId, data in pairs(sourceTable) do
+        if target[itemId] == nil then
+            local maxIndex = 0
+            for _, existing in pairs(target) do
+                if existing.layoutIndex and existing.layoutIndex > maxIndex then
+                    maxIndex = existing.layoutIndex
+                end
+            end
+            target[itemId] = { isActive = data.isActive, layoutIndex = data.layoutIndex or (maxIndex + 1) }
         end
     end
 end
 
-function BCDM:AddCustomItem(itemId)
-    if itemId == nil then return end
-    if not itemId then return end
+function BCDM:ResetCustomItems()
     local profileDB = BCDM.db.profile
-    if not profileDB.Items.CustomItems then profileDB.Items.CustomItems = {} end
-    profileDB.Items.CustomItems[itemId] = true
+    profileDB.Items.CustomItems = nil
+    BCDM:CopyCustomItemsToDB()
+    BCDM:ResetItemIcons()
+end
+
+function BCDM:AddCustomItem(itemId)
+    if not itemId then return end
+    local itemDB = BCDM.db.profile
+    itemDB.Items.CustomItems = itemDB.Items.CustomItems or {}
+    local items = itemDB.Items.CustomItems
+    local maxIndex = 0
+    for _, data in pairs(items) do
+        if data.layoutIndex and data.layoutIndex > maxIndex then
+            maxIndex = data.layoutIndex
+        end
+    end
+    items[itemId] = {
+        isActive = true,
+        layoutIndex = maxIndex + 1
+    }
+    BCDM:ResetItemIcons()
+end
+
+function BCDM:MoveCustomItem(itemId, delta)
+    if not itemId or not delta then return end
+
+    local itemDB = BCDM.db.profile
+    local items = itemDB.Items.CustomItems
+    if not items or not items[itemId] then return end
+
+    local newIndex = items[itemId].layoutIndex + delta
+    if newIndex < 1 then return end
+
+    for _, data in pairs(items) do
+        if data.layoutIndex == newIndex then
+            data.layoutIndex = items[itemId].layoutIndex
+            break
+        end
+    end
+
+    items[itemId].layoutIndex = newIndex
     BCDM:ResetItemIcons()
 end
 
 function BCDM:RemoveCustomItem(itemId)
-    if itemId == nil then return end
     if not itemId then return end
+
     local profileDB = BCDM.db.profile
-    if not profileDB.Items.CustomItems then profileDB.Items.CustomItems = {} end
+    if not profileDB.Items.CustomItems then return end
     profileDB.Items.CustomItems[itemId] = nil
+    local index = 1
+    local sortedItems = {}
+    for id, data in pairs(profileDB.Items.CustomItems) do
+        table.insert(sortedItems, { itemId = id, layoutIndex = data.layoutIndex })
+    end
+    table.sort(sortedItems, function(a, b) return a.layoutIndex < b.layoutIndex end)
+    for _, entry in ipairs(sortedItems) do
+        profileDB.Items.CustomItems[entry.itemId].layoutIndex = index
+        index = index + 1
+    end
     BCDM:ResetItemIcons()
 end
