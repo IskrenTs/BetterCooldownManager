@@ -163,7 +163,7 @@ function BCDM:UpdatePowerBarWidth()
     if PowerBarDB.Enabled and PowerBarDB.MatchWidthOfAnchor then
         local anchorFrame = _G[PowerBarDB.Layout[2]]
         if anchorFrame then
-            C_Timer.After(0.2, function() local anchorWidth = anchorFrame:GetWidth() PowerBar:SetWidth(anchorWidth) end)
+            C_Timer.After(0.5, function() local anchorWidth = anchorFrame:GetWidth() PowerBar:SetWidth(anchorWidth) end)
         end
     end
 end

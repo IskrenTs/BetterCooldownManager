@@ -352,7 +352,7 @@ function BCDM:UpdateCastBarWidth()
     if CastBarDB.Enabled and CastBarDB.MatchWidthOfAnchor then
         local anchorFrame = _G[CastBarDB.Layout[2]]
         if anchorFrame then
-            C_Timer.After(0.2, function() local anchorWidth = anchorFrame:GetWidth() CastBar:SetWidth(anchorWidth) end)
+            C_Timer.After(0.5, function() local anchorWidth = anchorFrame:GetWidth() CastBar:SetWidth(anchorWidth) end)
         end
     end
 end
