@@ -254,8 +254,8 @@ local function StyleBars()
     local buffBarSettings = BCDM.db.profile.CooldownManager.BuffBar
     local buffBarChildren = {_G["BuffBarCooldownViewer"]:GetChildren()}
 
-
     for _, childFrame in ipairs(buffBarChildren) do
+        childFrame:SetFrameStrata("LOW")
         local buffBar = childFrame.Bar
         local buffIcon = childFrame.Icon
 
