@@ -22,6 +22,21 @@ local function FetchCooldownTextRegion(cooldown)
     end
 end
 
+local function FetchClassColour()
+    local CooldownManagerDB = BCDM.db.profile
+    local GeneralDB = CooldownManagerDB.General
+    local BuffBarDB = CooldownManagerDB.CooldownManager.BuffBar
+    if BuffBarDB then
+        if BuffBarDB.ColourByClass then
+            local _, class = UnitClass("player")
+            local classColour = RAID_CLASS_COLORS[class]
+            if classColour then return classColour.r, classColour.g, classColour.b, 1 end
+        else
+            return BuffBarDB.ForegroundColour[1], BuffBarDB.ForegroundColour[2], BuffBarDB.ForegroundColour[3], BuffBarDB.ForegroundColour[4]
+        end
+    end
+end
+
 local function ApplyCooldownText(cooldownViewer)
     local CooldownManagerDB = BCDM.db.profile
     local GeneralDB = CooldownManagerDB.General
@@ -228,6 +243,7 @@ local function StyleChargeCount()
                     currentChargeText:SetShadowColor(0, 0, 0, 0)
                     currentChargeText:SetShadowOffset(0, 0)
                 end
+                currentChargeText:SetDrawLayer("OVERLAY")
             end
         end
         for _, childFrame in ipairs({ _G[viewerName]:GetChildren() }) do
@@ -244,36 +260,95 @@ local function StyleChargeCount()
                     applicationsText:SetShadowColor(0, 0, 0, 0)
                     applicationsText:SetShadowOffset(0, 0)
                 end
+                applicationsText:SetDrawLayer("OVERLAY")
             end
         end
     end
 end
 
-local function StyleBars()
-    local generalSettings = BCDM.db.profile.CooldownManager.General
-    local buffBarSettings = BCDM.db.profile.CooldownManager.BuffBar
+local function StyleBuffsBars()
+    local GeneralDB = BCDM.db.profile.General
+    local GeneralCooldownManagerSetting = BCDM.db.profile.CooldownManager.General
+    local BuffBarDB = BCDM.db.profile.CooldownManager.BuffBar
     local buffBarChildren = {_G["BuffBarCooldownViewer"]:GetChildren()}
 
     for _, childFrame in ipairs(buffBarChildren) do
-        childFrame:SetFrameStrata("LOW")
         local buffBar = childFrame.Bar
         local buffIcon = childFrame.Icon
 
-        childFrame:SetSize(buffBarSettings.Width, buffBarSettings.Height)
+        if BuffBarDB.MatchWidthOfAnchor then
+            local anchorFrame = _G[BuffBarDB.Layout[2]]
+            if anchorFrame then
+                local anchorWidth = anchorFrame:GetWidth()
+                childFrame:SetWidth(anchorWidth)
+                _G["BuffBarCooldownViewer"]:SetWidth(anchorWidth)
+            else
+                childFrame:SetWidth(BuffBarDB.Width)
+                _G["BuffBarCooldownViewer"]:SetWidth(BuffBarDB.Width)
+            end
+        end
+
+        childFrame:SetHeight(BuffBarDB.Height)
+
+        if childFrame.Bar then
+            childFrame.Bar:ClearAllPoints()
+            childFrame.Bar:SetPoint("TOPLEFT", childFrame, "TOPLEFT", 0, 0)
+            childFrame.Bar:SetPoint("BOTTOMRIGHT", childFrame, "BOTTOMRIGHT", 0, 0)
+            childFrame.Bar:SetStatusBarTexture(BCDM.Media.Foreground)
+            childFrame.Bar:SetStatusBarColor(FetchClassColour())
+            childFrame.Bar.Pip:SetAlpha(0)
+        end
 
         if buffBar then
-            buffBar:SetSize(buffBarSettings.Width, buffBarSettings.Height)
+            buffBar:ClearAllPoints()
+            buffBar:SetPoint("TOPLEFT", childFrame, "TOPLEFT", 0, 0)
+            buffBar:SetPoint("BOTTOMRIGHT", childFrame, "BOTTOMRIGHT", 0, 0)
             buffBar.BarBG:SetPoint("TOPLEFT", buffBar, "TOPLEFT", 0, 0)
             buffBar.BarBG:SetPoint("BOTTOMRIGHT", buffBar, "BOTTOMRIGHT", 0, 0)
             buffBar.BarBG:SetTexture(BCDM.Media.Background)
-            buffBar.BarBG:SetVertexColor(buffBarSettings.BackgroundColour[1], buffBarSettings.BackgroundColour[2], buffBarSettings.BackgroundColour[3], buffBarSettings.BackgroundColour[4])
+            buffBar.BarBG:SetVertexColor(BuffBarDB.BackgroundColour[1], BuffBarDB.BackgroundColour[2], BuffBarDB.BackgroundColour[3], BuffBarDB.BackgroundColour[4])
 
             if buffIcon then
+                if not BuffBarDB.Icon.Enabled then buffIcon:Hide() else buffIcon:Show() end
                 BCDM:StripTextures(buffIcon.Icon)
-                buffIcon.Icon:SetSize(buffBarSettings.Height, buffBarSettings.Height)
+                buffIcon.Icon:SetSize(BuffBarDB.Height, BuffBarDB.Height)
                 buffIcon.Icon:ClearAllPoints()
-                buffIcon.Icon:SetPoint("RIGHT", buffBar, "LEFT", 1, 0)
-                buffIcon.Icon:SetTexCoord(generalSettings.IconZoom * 0.5, 1 - generalSettings.IconZoom * 0.5, generalSettings.IconZoom * 0.5, 1 - generalSettings.IconZoom * 0.5)
+                if BuffBarDB.Icon.Layout == "LEFT" then
+                    buffIcon.Icon:SetPoint("RIGHT", buffBar, "LEFT", 1, 0)
+                else
+                    buffIcon.Icon:SetPoint("LEFT", buffBar, "RIGHT", -1, 0)
+                end
+                buffIcon.Icon:SetTexCoord(GeneralCooldownManagerSetting.IconZoom * 0.5, 1 - GeneralCooldownManagerSetting.IconZoom * 0.5, GeneralCooldownManagerSetting.IconZoom * 0.5, 1 - GeneralCooldownManagerSetting.IconZoom * 0.5)
+            end
+
+            if buffBar.Name then
+                if not BuffBarDB.Text.SpellName.Enabled then buffBar.Name:Hide() else buffBar.Name:Show() end
+                buffBar.Name:ClearAllPoints()
+                buffBar.Name:SetPoint(BuffBarDB.Text.SpellName.Layout[1], buffBar, BuffBarDB.Text.SpellName.Layout[2], BuffBarDB.Text.SpellName.Layout[3], BuffBarDB.Text.SpellName.Layout[4])
+                buffBar.Name:SetFont(BCDM.Media.Font, BuffBarDB.Text.SpellName.FontSize, GeneralDB.Fonts.FontFlag)
+                buffBar.Name:SetTextColor(BuffBarDB.Text.SpellName.Colour[1], BuffBarDB.Text.SpellName.Colour[2], BuffBarDB.Text.SpellName.Colour[3], 1)
+                if GeneralDB.Fonts.Shadow.Enabled then
+                    buffBar.Name:SetShadowColor(GeneralDB.Fonts.Shadow.Colour[1], GeneralDB.Fonts.Shadow.Colour[2], GeneralDB.Fonts.Shadow.Colour[3], GeneralDB.Fonts.Shadow.Colour[4])
+                    buffBar.Name:SetShadowOffset(GeneralDB.Fonts.Shadow.OffsetX, GeneralDB.Fonts.Shadow.OffsetY)
+                else
+                    buffBar.Name:SetShadowColor(0, 0, 0, 0)
+                    buffBar.Name:SetShadowOffset(0, 0)
+                end
+            end
+
+            if buffBar.Duration then
+                if not BuffBarDB.Text.Duration.Enabled then buffBar.Duration:Hide() else buffBar.Duration:Show() end
+                buffBar.Duration:ClearAllPoints()
+                buffBar.Duration:SetPoint(BuffBarDB.Text.Duration.Layout[1], buffBar, BuffBarDB.Text.Duration.Layout[2], BuffBarDB.Text.Duration.Layout[3], BuffBarDB.Text.Duration.Layout[4])
+                buffBar.Duration:SetFont(BCDM.Media.Font, BuffBarDB.Text.Duration.FontSize, GeneralDB.Fonts.FontFlag)
+                buffBar.Duration:SetTextColor(BuffBarDB.Text.Duration.Colour[1], BuffBarDB.Text.Duration.Colour[2], BuffBarDB.Text.Duration.Colour[3], 1)
+                if GeneralDB.Fonts.Shadow.Enabled then
+                    buffBar.Duration:SetShadowColor(GeneralDB.Fonts.Shadow.Colour[1], GeneralDB.Fonts.Shadow.Colour[2], GeneralDB.Fonts.Shadow.Colour[3], GeneralDB.Fonts.Shadow.Colour[4])
+                    buffBar.Duration:SetShadowOffset(GeneralDB.Fonts.Shadow.OffsetX, GeneralDB.Fonts.Shadow.OffsetY)
+                else
+                    buffBar.Duration:SetShadowColor(0, 0, 0, 0)
+                    buffBar.Duration:SetShadowOffset(0, 0)
+                end
             end
 
             BCDM:AddBorder(buffBar)
@@ -342,7 +417,7 @@ function BCDM:SkinCooldownManager()
     StyleIcons()
     StyleChargeCount()
     Position()
-    C_Timer.After(1, function() StyleBars() end)
+    C_Timer.After(1, function() StyleBuffsBars() end)
     SetHooks()
     SetupCenterBuffs()
     SetGlowType()

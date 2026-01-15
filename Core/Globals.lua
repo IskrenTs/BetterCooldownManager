@@ -54,52 +54,6 @@ local function SetupSlashCommands()
     SlashCmdList["BCDMRELOAD"] = function() ReloadUI() end
 end
 
--- function BCDM:StripTextures(textureToStrip)
---     if not textureToStrip then return end
-
---     if textureToStrip.GetMaskTexture then
---         local i = 1
---         while textureToStrip:GetMaskTexture(i) do
---             textureToStrip:RemoveMaskTexture(textureToStrip:GetMaskTexture(i))
---             i = i + 1
---         end
---     end
-
---     local parent = textureToStrip:GetParent()
---     if not parent or not parent.GetRegions then return end
-
---     for i = 1, select("#", parent:GetRegions()) do
---         local region = select(i, parent:GetRegions())
---         if region and region:IsObjectType("Texture") and region ~= textureToStrip then
---             if region.GetAtlas then
---                 local atlas = region:GetAtlas()
---                 if atlas and atlas:find("CoolDownManager") and atlas:find("Overlay") then
---                     region:SetTexture(nil)
---                     region:SetAtlas(nil)
---                     region:Hide()
---                     region.Show = function() end
---                 end
---             end
-
---             if region:IsShown() then
---                 region:SetTexture(nil)
---                 region:Hide()
---             end
---         end
---     end
-
---     local elementsToStrip = { "Border", "Shadow", "IconBorder", "NormalTexture", "Flash", "Backdrop", "Background", "HighlightTexture", "Highlight", "DebuffBorder" }
-
---     for _, element in ipairs(elementsToStrip) do
---         if parent[element] then parent[element]:Hide() end
---     end
-
---     if parent.SetBackdrop then parent:SetBackdrop(nil) end
---     if parent.SetNormalTexture then parent:SetNormalTexture(nil) end
---     if parent.SetHighlightTexture then parent:SetHighlightTexture(nil) end
---     if parent.SetPushedTexture then parent:SetPushedTexture(nil) end
--- end
-
 local function PixelPerfect(value)
     if not value then return 0 end
     local _, screenHeight = GetPhysicalScreenSize()
