@@ -188,28 +188,6 @@ function BCDM:CreateCooldownViewerOverlays()
         BuffIconCooldownViewerOverlay:Hide()
         BCDM.BuffIconCooldownViewerOverlay = BuffIconCooldownViewerOverlay
     end
-
-    if _G["BCDM_CustomCooldownViewer"] then
-        local CustomCooldownViewerOverlay = CreateFrame("Frame", "BCDM_CustomCooldownViewerOverlay", UIParent, "BackdropTemplate")
-        CustomCooldownViewerOverlay:SetPoint("TOPLEFT", _G["BCDM_CustomCooldownViewer"], "TOPLEFT", -8, 8)
-        CustomCooldownViewerOverlay:SetPoint("BOTTOMRIGHT", _G["BCDM_CustomCooldownViewer"], "BOTTOMRIGHT", 8, -8)
-        CustomCooldownViewerOverlay:SetBackdrop({ edgeFile = "Interface\\AddOns\\BetterCooldownManager\\Media\\Glow.tga", edgeSize = 8, insets = {left = -8, right = -8, top = -8, bottom = -8} })
-        CustomCooldownViewerOverlay:SetBackdropColor(0, 0, 0, 0)
-        CustomCooldownViewerOverlay:SetBackdropBorderColor(unpack(OVERLAY_COLOUR))
-        CustomCooldownViewerOverlay:Hide()
-        BCDM.CustomCooldownViewerOverlay = CustomCooldownViewerOverlay
-    end
-
-    if _G["BCDM_CustomItemBar"] then
-        local CustomItemBarOverlay = CreateFrame("Frame", "BCDM_CustomItemBarOverlay", UIParent, "BackdropTemplate")
-        CustomItemBarOverlay:SetPoint("TOPLEFT", _G["BCDM_CustomItemBar"], "TOPLEFT", -8, 8)
-        CustomItemBarOverlay:SetPoint("BOTTOMRIGHT", _G["BCDM_CustomItemBar"], "BOTTOMRIGHT", 8, -8)
-        CustomItemBarOverlay:SetBackdrop({ edgeFile = "Interface\\AddOns\\BetterCooldownManager\\Media\\Glow.tga", edgeSize = 8, insets = {left = -8, right = -8, top = -8, bottom = -8} })
-        CustomItemBarOverlay:SetBackdropColor(0, 0, 0, 0)
-        CustomItemBarOverlay:SetBackdropBorderColor(unpack(OVERLAY_COLOUR))
-        CustomItemBarOverlay:Hide()
-        BCDM.CustomItemBarOverlay = CustomItemBarOverlay
-    end
 end
 
 function BCDM:ClearTicks()
@@ -238,7 +216,6 @@ function BCDM:CreateTicks(count)
     end
 end
 
-
 function BCDM:OpenURL(title, urlText)
     StaticPopupDialogs["UUF_URL_POPUP"] = {
         text = title or "",
@@ -263,7 +240,6 @@ function BCDM:OpenURL(title, urlText)
     end
     return urlDialog
 end
-
 
 function BCDM:CreatePrompt(title, text, onAccept, onCancel, acceptText, cancelText)
     StaticPopupDialogs["UUF_PROMPT_DIALOG"] = {

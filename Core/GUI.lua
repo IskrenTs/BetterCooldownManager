@@ -2534,8 +2534,6 @@ function BCDM:CreateGUI()
         if MainTab == "Essential" then  BCDM.EssentialCooldownViewerOverlay:Show() else BCDM.EssentialCooldownViewerOverlay:Hide() end
         if MainTab == "Utility" then  BCDM.UtilityCooldownViewerOverlay:Show() else BCDM.UtilityCooldownViewerOverlay:Hide() end
         if MainTab == "Buffs" then  BCDM.BuffIconCooldownViewerOverlay:Show() else BCDM.BuffIconCooldownViewerOverlay:Hide() end
-        if MainTab == "Custom" then BCDM.CustomCooldownViewerOverlay:Show() else BCDM.CustomCooldownViewerOverlay:Hide() end
-        if MainTab == "Item" then  BCDM.CustomItemBarOverlay:Show() else BCDM.CustomItemBarOverlay:Hide() end
         GenerateSupportText(Container)
     end
 
