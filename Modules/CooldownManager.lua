@@ -417,6 +417,7 @@ local function SetGlowType()
 end
 
 function BCDM:SkinCooldownManager()
+    if not BCDM.db.profile.CooldownManager.Enable then return end
     C_CVar.SetCVar("cooldownViewerEnabled", 1)
     StyleIcons()
     StyleChargeCount()
@@ -431,6 +432,7 @@ function BCDM:SkinCooldownManager()
 end
 
 function BCDM:UpdateCooldownViewer(viewerType)
+    if not BCDM.db.profile.CooldownManager.Enable then return end
     if viewerType == "BuffBar" then BCDM:UpdateBuffBarStyle() return end
     local cooldownManagerSettings = BCDM.db.profile.CooldownManager
     local cooldownViewerFrame = _G[BCDM.DBViewerToCooldownManagerViewer[viewerType]]

@@ -606,6 +606,26 @@ local function CreateGlobalSettings(parentContainer)
     globalSettingsContainer:SetLayout("Flow")
     ScrollFrame:AddChild(globalSettingsContainer)
 
+    local enableCDMSkinningCheckbox = AG:Create("CheckBox")
+    enableCDMSkinningCheckbox:SetLabel("Enable Skinning - |cFFFF4040Reload|r Required.")
+    enableCDMSkinningCheckbox:SetValue(BCDM.db.profile.CooldownManager.Enable)
+    enableCDMSkinningCheckbox:SetCallback("OnValueChanged", function(_, _, value)
+        StaticPopupDialogs["BCDM_RELOAD_UI"] = {
+            text = "You must reload to apply this change, do you want to reload now?",
+            button1 = "Reload Now",
+            button2 = "Later",
+            showAlert = true,
+            OnAccept = function() BCDM.db.profile.CooldownManager.Enable = value ReloadUI() end,
+            OnCancel = function() enableCDMSkinningCheckbox:SetValue(BCDM.db.profile.CooldownManager.Enable) globalSettingsContainer:DoLayout() end,
+            timeout = 0,
+            whileDead = true,
+            hideOnEscape = true,
+        }
+        StaticPopup_Show("BCDM_RELOAD_UI")
+    end)
+    enableCDMSkinningCheckbox:SetRelativeWidth(1)
+    globalSettingsContainer:AddChild(enableCDMSkinningCheckbox)
+
     local iconZoomSlider = AG:Create("Slider")
     iconZoomSlider:SetLabel("Icon Zoom")
     iconZoomSlider:SetValue(CooldownManagerDB.General.IconZoom)

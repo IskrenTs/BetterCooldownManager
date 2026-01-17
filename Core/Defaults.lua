@@ -73,6 +73,7 @@ local Defaults = {
             },
         },
         CooldownManager = {
+            Enable = true,
             General = {
                 IconZoom = 0.1,
                 BorderSize = 1,
