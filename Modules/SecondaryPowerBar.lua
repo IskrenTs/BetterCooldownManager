@@ -439,9 +439,18 @@ local function UpdatePowerValues()
         BCDM:ClearTicks()
         powerCurrent = UnitStagger("player") or 0
         local powerMax = UnitHealthMax("player") or 0
+        local staggerPercentage = (powerCurrent / powerMax) * 100
         secondaryPowerBar.Status:SetMinMaxValues(0, powerMax)
         secondaryPowerBar.Status:SetValue(powerCurrent)
         secondaryPowerBar.Text:SetText(tostring(AbbreviateLargeNumbers(powerCurrent)))
+        local staggerPercentageColour = BCDM.db.profile.General.Colours.SecondaryPower["STAGGER_COLOURS"]
+        if staggerPercentage < 30 then
+            secondaryPowerBar.Status:SetStatusBarColor(staggerPercentageColour.LIGHT[1], staggerPercentageColour.LIGHT[2], staggerPercentageColour.LIGHT[3], staggerPercentageColour.LIGHT[4] or 1)
+        elseif staggerPercentage < 60 then
+            secondaryPowerBar.Status:SetStatusBarColor(staggerPercentageColour.MODERATE[1], staggerPercentageColour.MODERATE[2], staggerPercentageColour.MODERATE[3], staggerPercentageColour.MODERATE[4] or 1)
+        else
+            secondaryPowerBar.Status:SetStatusBarColor(staggerPercentageColour.HEAVY[1], staggerPercentageColour.HEAVY[2], staggerPercentageColour.HEAVY[3], staggerPercentageColour.HEAVY[4] or 1)
+        end
         secondaryPowerBar.Status:Show()
     elseif powerType == Enum.PowerType.Maelstrom then
         powerCurrent = GetAuraStacks(344179)

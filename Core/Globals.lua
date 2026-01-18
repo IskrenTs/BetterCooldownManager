@@ -2,6 +2,7 @@ local _, BCDM = ...
 BCDMG = BCDMG or {}
 
 BCDM.IS_DEATHKNIGHT = select(2, UnitClass("player")) == "DEATHKNIGHT"
+BCDM.IS_MONK = select(2, UnitClass("player")) == "MONK"
 
 BCDM.CooldownManagerViewers = { "EssentialCooldownViewer", "UtilityCooldownViewer", "BuffIconCooldownViewer", }
 

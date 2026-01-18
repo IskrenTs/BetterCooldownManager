@@ -3,6 +3,7 @@ local LSM = BCDM.LSM
 local AG = BCDM.AG
 local isGUIOpen = false
 local isUnitDeathKnight = BCDM.IS_DEATHKNIGHT
+local isUnitMonk = BCDM.IS_MONK
 BCDMGUI = {}
 
 local AnchorPoints = { { ["TOPLEFT"] = "Top Left", ["TOP"] = "Top", ["TOPRIGHT"] = "Top Right", ["LEFT"] = "Left", ["CENTER"] = "Center", ["RIGHT"] = "Right", ["BOTTOMLEFT"] = "Bottom Left", ["BOTTOM"] = "Bottom", ["BOTTOMRIGHT"] = "Bottom Right" }, { "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT", } }
@@ -35,6 +36,11 @@ local PowerNames = {
         FROST = "Frost",
         UNHOLY = "Unholy",
         BLOOD = "Blood"
+    },
+    ["STAGGER_COLOURS"] = {
+        LIGHT = "Light Stagger",
+        MODERATE = "Moderate Stagger",
+        HEAVY = "Heavy Stagger"
     }
 }
 
@@ -506,6 +512,25 @@ local function CreateGeneralSettings(parentContainer)
             local R, G, B = unpack(powerColour)
             PowerColour:SetColor(R, G, B)
             PowerColour:SetCallback("OnValueChanged", function(widget, _, r, g, b) BCDM.db.profile.General.Colours.SecondaryPower.RUNES[runeType] = {r, g, b} BCDM:UpdateBCDM() end)
+            PowerColour:SetHasAlpha(false)
+            PowerColour:SetRelativeWidth(0.32)
+            runeColourContainer:AddChild(PowerColour)
+        end
+    end
+
+    if isUnitMonk then
+        local runeColourContainer = AG:Create("InlineGroup")
+        runeColourContainer:SetTitle("Stagger Colours")
+        runeColourContainer:SetFullWidth(true)
+        runeColourContainer:SetLayout("Flow")
+        CustomColoursContainer:AddChild(runeColourContainer)
+        for _, staggerState in ipairs({"LIGHT", "MODERATE", "HEAVY"}) do
+            local powerColour = BCDM.db.profile.General.Colours.SecondaryPower.STAGGER_COLOURS[staggerState]
+            local PowerColour = AG:Create("ColorPicker")
+            PowerColour:SetLabel(PowerNames["STAGGER_COLOURS"][staggerState])
+            local R, G, B = unpack(powerColour)
+            PowerColour:SetColor(R, G, B)
+            PowerColour:SetCallback("OnValueChanged", function(widget, _, r, g, b) BCDM.db.profile.General.Colours.SecondaryPower.STAGGER_COLOURS[staggerState] = {r, g, b} BCDM:UpdateBCDM() end)
             PowerColour:SetHasAlpha(false)
             PowerColour:SetRelativeWidth(0.32)
             runeColourContainer:AddChild(PowerColour)
