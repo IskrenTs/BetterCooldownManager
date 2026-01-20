@@ -365,4 +365,6 @@ function BCDM:UpdateCooldownViewers()
     BCDM:UpdateCustomItemsSpellsBar()
     BCDM:UpdateTrinketBar()
     BCDM:UpdateCastBar()
+    BCDM:UpdatePowerBar()
+    BCDM:UpdateSecondaryPowerBar()
 end
