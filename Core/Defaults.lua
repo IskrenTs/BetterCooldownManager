@@ -4,6 +4,7 @@ local Defaults = {
     global = {
         UseGlobalProfile = false,
         GlobalProfileName = "Default",
+        DisplayChatPrint = true,
         EditModeManager = {
             SwapOnInstanceDifficulty = false,
             RaidLayouts = {

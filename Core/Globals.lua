@@ -52,7 +52,7 @@ local function SetupSlashCommands()
     SLASH_BCDM3 = "/cdm"
     SLASH_BCDM4 = "/bcm"
     SlashCmdList["BCDM"] = function() BCDM:CreateGUI() end
-    BCDM:PrettyPrint("'|cFF8080FF/bcdm|r' for in-game configuration.")
+    if BCDM.db.global.DisplayChatPrint then BCDM:PrettyPrint("'|cFF8080FF/bcdm|r' for in-game configuration.") end
 
     SLASH_BCDMRELOAD1 = "/rl"
     SlashCmdList["BCDMRELOAD"] = function() C_UI.Reload() end
