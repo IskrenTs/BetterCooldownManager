@@ -64,6 +64,15 @@ local function TryApplyChargeCooldown(cd, spellID)
     end
 
     if type(chargeInfo) == "table" then
+        local chargeStart = chargeInfo.cooldownStartTime or chargeInfo.chargeStartTime or chargeInfo.chargeStart
+        local chargeDuration = chargeInfo.cooldownDuration or chargeInfo.chargeDuration
+
+        if chargeStart and chargeDuration then
+            cd:SetCooldown(chargeStart, chargeDuration)
+        else
+            ClearCooldown(cd)
+        end
+
         return true
     end
 
