@@ -42,6 +42,7 @@ BCDM.SpecIdToToken = BCDM.SpecIdToToken or {
     [270] = "MISTWEAVER",
     [577] = "HAVOC",
     [581] = "VENGEANCE",
+    [1480] = "DEVOURER",
     [1467] = "DEVASTATION",
     [1468] = "PRESERVATION",
     [1473] = "AUGMENTATION",
