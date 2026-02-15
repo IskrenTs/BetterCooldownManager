@@ -7,7 +7,6 @@ function BCDM:SetupEventManager()
     BCDMEventManager:RegisterEvent("LOADING_SCREEN_DISABLED")
     BCDMEventManager:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     BCDMEventManager:RegisterEvent("TRAIT_CONFIG_UPDATED")
-    BCDMEventManager:RegisterEvent("SPELLS_CHANGED")
     BCDMEventManager:SetScript("OnEvent", function(_, event, ...)
         if InCombatLockdown() then return end
         if event == "PLAYER_SPECIALIZATION_CHANGED" then
