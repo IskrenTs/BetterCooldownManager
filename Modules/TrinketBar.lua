@@ -57,14 +57,35 @@ local function FetchItemData(itemId)
     return startTime, durationTime
 end
 
-local function CreateCustomIcon(itemId)
+local function IsOnUseTrinket(itemId)
+    if not itemId then return false end
+    local spellName, spellID = C_Item.GetItemSpell(itemId)
+    return (spellID and spellID > 0) or (spellName and spellName ~= "")
+end
+
+local function FetchEquippedOnUseTrinkets()
+    local equipped = {}
+    local trinketSlots = { 13, 14 }
+
+    for _, slotID in ipairs(trinketSlots) do
+        local itemId = GetInventoryItemID("player", slotID)
+        if itemId and IsOnUseTrinket(itemId) then
+            equipped[#equipped + 1] = { itemId = itemId, slotID = slotID }
+        end
+    end
+
+    return equipped
+end
+
+local function CreateCustomIcon(itemId, slotID)
     local CooldownManagerDB = BCDM.db.profile
     local GeneralDB = CooldownManagerDB.General
     local CustomDB = CooldownManagerDB.CooldownManager.Trinket
     if not itemId then return end
     if not C_Item.GetItemInfo(itemId) then return end
 
-    local customIcon = CreateFrame("Button", "BCDM_Custom_" .. itemId, UIParent, "BackdropTemplate")
+    local uniqueFrameId = slotID or itemId
+    local customIcon = CreateFrame("Button", "BCDM_Custom_Trinket_" .. uniqueFrameId, UIParent, "BackdropTemplate")
     customIcon:SetBackdrop({ edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = BCDM.db.profile.CooldownManager.General.BorderSize, insets = { left = 0, right = 0, top = 0, bottom = 0 } })
     customIcon:SetBackdropColor(0, 0, 0, 0)
     if BCDM.db.profile.CooldownManager.General.BorderSize <= 0 then
@@ -114,25 +135,13 @@ local function CreateCustomIcon(itemId)
 end
 
 local function CreateCustomIcons(iconTable)
-    local Trinkets = BCDM.db.profile.CooldownManager.Trinket.Trinkets
-
     wipe(iconTable)
 
-    if Trinkets then
-        local trinkets = {}
-        for itemId, data in pairs(Trinkets) do
-            if data.isActive then
-                table.insert(trinkets, {id = itemId, index = data.layoutIndex})
-            end
-        end
-
-        table.sort(trinkets, function(a, b) return a.index < b.index end)
-
-        for _, item in ipairs(trinkets) do
-            local customTrinket = CreateCustomIcon(item.id)
-            if customTrinket then
-                table.insert(iconTable, customTrinket)
-            end
+    local trinkets = FetchEquippedOnUseTrinkets()
+    for _, trinketEntry in ipairs(trinkets) do
+        local customTrinket = CreateCustomIcon(trinketEntry.itemId, trinketEntry.slotID)
+        if customTrinket then
+            table.insert(iconTable, customTrinket)
         end
     end
 end
@@ -246,7 +255,11 @@ local function LayoutTrinketBar()
         end
     end
 
-    if CustomDB.Enabled then  BCDM.TrinketBarContainer:Show() else BCDM.TrinketBarContainer:Hide() end
+    if CustomDB.Enabled and #customTrinketIcons > 0 then
+        BCDM.TrinketBarContainer:Show()
+    else
+        BCDM.TrinketBarContainer:Hide()
+    end
 end
 
 function BCDM:SetupTrinketBar()
@@ -270,50 +283,11 @@ function BCDM:UpdateTrinketBar()
 end
 
 function BCDM:AdjustTrinketLayoutIndex(direction, itemId)
-    local CooldownManagerDB = BCDM.db.profile
-    local CustomDB = CooldownManagerDB.CooldownManager.Trinket
-    local Trinkets = CustomDB.Trinkets
-
-    if not Trinkets then return end
-
-    local currentIndex = Trinkets[itemId].layoutIndex
-    local newIndex = currentIndex + direction
-
-    local totalTrinkets = 0
-
-    for _ in pairs(Trinkets) do totalTrinkets = totalTrinkets + 1 end
-    if newIndex < 1 or newIndex > totalTrinkets then return end
-
-    for _, data in pairs(Trinkets) do
-        if data.layoutIndex == newIndex then
-            data.layoutIndex = currentIndex
-            break
-        end
-    end
-
-    Trinkets[itemId].layoutIndex = newIndex
-
+    -- Legacy compatibility: trinket order is now driven by equipment slot (13, 14).
     BCDM:UpdateTrinketBar()
 end
 
 function BCDM:AdjustTrinketList(itemId, adjustingHow)
-    local CooldownManagerDB = BCDM.db.profile
-    local CustomDB = CooldownManagerDB.CooldownManager.Trinket
-    local Trinkets = CustomDB.Trinkets
-
-    if not Trinkets then CustomDB.Trinkets = {} Trinkets = CustomDB.Trinkets end
-
-    if adjustingHow == "add" then
-        local maxIndex = 0
-        for _, data in pairs(Trinkets) do
-            if data.layoutIndex > maxIndex then
-                maxIndex = data.layoutIndex
-            end
-        end
-        Trinkets[itemId] = { isActive = true, layoutIndex = maxIndex + 1 }
-    elseif adjustingHow == "remove" then
-        Trinkets[itemId] = nil
-    end
-
+    -- Legacy compatibility: trinket list is now driven by equipped on-use trinkets.
     BCDM:UpdateTrinketBar()
 end

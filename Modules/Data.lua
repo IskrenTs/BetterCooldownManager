@@ -508,7 +508,7 @@ function BCDM:AddRecommendedSpells(customDB)
     end
 end
 
--- Event Check to see what trinkets are equipped. Update DB if not present else toggle isActive.
+-- Event check for equipped trinkets; trinket icons are driven directly from slots 13/14.
 local trinketCheckEvent = CreateFrame("Frame")
 trinketCheckEvent:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 trinketCheckEvent:RegisterEvent("PLAYER_LOGIN")
@@ -525,23 +525,10 @@ end)
 
 function BCDM:FetchEquippedTrinkets()
     if InCombatLockdown() then return end
-    if not BCDM.db.profile.CooldownManager.Trinket.Enabled then return end
-    local trinketProfile = BCDM.db.profile.CooldownManager.Trinket
-    local equippedItemIds = { GetInventoryItemID("player", 13), GetInventoryItemID("player", 14) }
-    local usableCount = 0
-
-    for itemId in pairs(trinketProfile.Trinkets) do trinketProfile.Trinkets[itemId] = nil end
-
-    for slotIndex, itemId in ipairs(equippedItemIds) do
-        if itemId and C_Item.IsUsableItem(itemId) then
-            trinketProfile.Trinkets[itemId] = { isActive = true, layoutIndex = slotIndex }
-            usableCount = usableCount + 1
-            BCDM.TrinketBarContainer:Show()
-        end
+    if not BCDM.db.profile.CooldownManager.Trinket.Enabled then
+        if BCDM.TrinketBarContainer then BCDM.TrinketBarContainer:Hide() end
+        return
     end
-
-    if usableCount == 0 and BCDM.TrinketBarContainer then BCDM.TrinketBarContainer:Hide() return end
-
     BCDM:UpdateCooldownViewer("Trinket")
 end
 

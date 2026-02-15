@@ -1870,7 +1870,9 @@ local function CreateCooldownViewerSettings(parentContainer, viewerType)
         layoutContainer:AddChild(frameStrataDropdown)
     end
 
-    CreateCooldownViewerTextSettings(ScrollFrame, viewerType)
+    if viewerType ~= "Trinket" then
+        CreateCooldownViewerTextSettings(ScrollFrame, viewerType)
+    end
 
     if viewerType == "Custom" or viewerType == "AdditionalCustom" then
         local spellContainer = AG:Create("InlineGroup")
